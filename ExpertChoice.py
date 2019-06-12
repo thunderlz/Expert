@@ -372,9 +372,14 @@ class expertChoice:
 
 
                 self.dfsampleexpert=pd.merge(self.dfconditionexpert,self.dfmajorexpert,on='index',how='inner')
-                self.dfsampleexpert=pd.DataFrame(self.dfsampleexpert['index'].unique())
+                self.dfsampleexpert=pd.DataFrame(self.dfsampleexpert['index'].unique(),columns=['index'])
                 # 去除重复的，已经抽取的就减掉。
-                # self.dfsampleexpert=self.dfsampleexpert.drop()
+                _ = self.dfrltexpert.index.astype(int)
+                print(_)
+                self.dfsampleexpert.set_index('index', inplace=True)
+                self.dfsampleexpert.drop(_, inplace=True)
+                self.dfsampleexpert.reset_index(inplace=True)
+                print(self.dfsampleexpert.shape[0])
 
                 # dfsampleexpert是可以用来抽取的专家index清单，只有一列，sample就是在index，防止重名的情况发生
                 # dfrltexpert就是抽取出来的专家库，包含完整的列。
@@ -382,7 +387,7 @@ class expertChoice:
 
                     # 折腾索引
                     _=pd.merge(self.dfsampleexpert.sample(int(self.expertchoicenum_var.get()),replace=False),
-                                              self.dfexpert,left_on=0,right_on='index',how='inner')
+                                              self.dfexpert,on='index',how='inner')
                     _['index']=_['index'].astype(str)
                     _.set_index('index',inplace=True)
                     _['是否参加']='参加'
